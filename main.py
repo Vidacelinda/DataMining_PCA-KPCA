@@ -1,16 +1,34 @@
-# This is a sample Python script.
+'''Libary needed'''
+# import numpy as np
+# import pandas as pd
+# import matplotlib.pyplot as plt
+# from sklearn.decomposition import PCA
+# from sklearn.decomposition import KernalPCA
 
-# Press ⌃R to execute it or replace it with your code.
-# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
+#pca function
+# from numpy import einsum
+def my_pca(Data,k):
+  #calculate mean of the input along each col(featuere)
+  mean1=np.mean(Data,axis=0)
 
+  #center data
+  D1=Data-mean1
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press ⌘F8 to toggle the breakpoint.
+  #covaraince matrix of centered data
+  cov=np.cov(D1,rowvar=False)
 
+  #eigenvalues and eigenvectors of covaraince matrix
+  eigenvalues,eigenvectors=np.linalg.eig(cov)
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+  #sort eigenvalues in descending order and rearrange those eigenvectors
+  idx=np.argsort(eigenvalues)[::-1]
+  eigenvalues=eigenvalues[idx]
+  eigenvectors=eigenvectors[:,idx]
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+  #select top eigenvectors and reduce the dimensionalty
+  reduced_eigenvectors=eigenvectors[:,:k]
+
+  #project the centered data to the reduced eignvectors
+  projecteddata=np.dot(D1,reduced_eigenvectors)
+
+  return projecteddata,reduced_eigenvectors,mean1
